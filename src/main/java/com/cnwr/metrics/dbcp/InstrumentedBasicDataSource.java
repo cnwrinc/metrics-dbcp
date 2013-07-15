@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.codahale.metrics.Gauge;
+import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
@@ -81,18 +82,20 @@ public class InstrumentedBasicDataSource extends BasicDataSource {
         });
         
         this.getConnectionTimer = registry.timer(name(prefix, "getconnection"));
+        final JmxReporter reporter = JmxReporter.forRegistry(registry).build();
+        reporter.start();
     }
     
     public void afterPropertiesSet() throws IllegalArgumentException {
         if (registry == null) {
             throw new IllegalArgumentException("registry must be specified");
         }
+        this.instrument(registry, this);
     }
     
     public void setMetricRegistry(String registryName) {
         final MetricRegistry registry = SharedMetricRegistries.getOrCreate(registryName);
         this.registry = registry;
-        this.instrument(registry, this);
     }
     
     @Override
