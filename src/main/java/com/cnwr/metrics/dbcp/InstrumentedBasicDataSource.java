@@ -15,10 +15,10 @@ import static com.codahale.metrics.MetricRegistry.name;
 
 public class InstrumentedBasicDataSource extends BasicDataSource {
     
-    private MetricRegistry registry;
-    private Timer getConnectionTimer;
+    private MetricRegistry registry = null;
+    private Timer getConnectionTimer = null;
     /**
-     * Instrumented the given BasicDataSource instance with a series of timers and gauges.
+     * Instrument the given BasicDataSource instance with a series of timers and gauges.
      * 
      */
     public void instrument(MetricRegistry registry,
