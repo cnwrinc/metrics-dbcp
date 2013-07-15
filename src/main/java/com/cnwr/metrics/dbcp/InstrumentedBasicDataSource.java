@@ -1,15 +1,20 @@
 package com.cnwr.metrics.dbcp;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.apache.commons.dbcp.BasicDataSource;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class InstrumentedBasicDataSource extends BasicDataSource {
     
     private MetricRegistry registry;
+    private Timer getConnectionTimer;
     /**
      * Instrumented the given BasicDataSource instance with a series of timers and gauges.
      * 
@@ -73,6 +78,8 @@ public class InstrumentedBasicDataSource extends BasicDataSource {
                 return datasource.getTimeBetweenEvictionRunsMillis();
             }
         });
+        
+        this.getConnectionTimer = registry.timer(name(prefix, "getconnection"));
     }
     
     public void afterPropertiesSet() throws IllegalArgumentException {
@@ -86,8 +93,14 @@ public class InstrumentedBasicDataSource extends BasicDataSource {
         this.instrument(registry, this);
     }
     
+    @Override
+    public Connection getConnection() throws SQLException {
+        final Timer.Context ctx = getConnectionTimer.time();
+        try {
+            return super.getConnection();
+        } finally {
+            ctx.stop();
+        }
+    }
     
-    
-    
-
 }

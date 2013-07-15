@@ -17,4 +17,8 @@
   		<version>3.0.0</version>
   	</dependency>
   </dependencies>
+  <organization>
+  	<name>CNWR</name>
+  	<url>http://www.cnwr.com</url>
+  </organization>
 </project>
