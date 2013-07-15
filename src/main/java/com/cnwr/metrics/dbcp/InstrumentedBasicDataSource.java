@@ -7,6 +7,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.Timer;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -88,7 +89,8 @@ public class InstrumentedBasicDataSource extends BasicDataSource {
         }
     }
     
-    public void setMetricRegistry(MetricRegistry registry) {
+    public void setMetricRegistry(String registryName) {
+        final MetricRegistry registry = SharedMetricRegistries.getOrCreate(registryName);
         this.registry = registry;
         this.instrument(registry, this);
     }
