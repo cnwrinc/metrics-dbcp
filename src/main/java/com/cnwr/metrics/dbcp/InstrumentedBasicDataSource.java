@@ -90,12 +90,12 @@ public class InstrumentedBasicDataSource extends BasicDataSource {
         if (registry == null) {
             throw new IllegalArgumentException("registry must be specified");
         }
-        this.instrument(registry, this);
     }
     
     public void setMetricRegistry(String registryName) {
         final MetricRegistry registry = SharedMetricRegistries.getOrCreate(registryName);
         this.registry = registry;
+        this.instrument(registry, this);
     }
     
     @Override
